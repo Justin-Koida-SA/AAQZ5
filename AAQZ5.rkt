@@ -46,7 +46,12 @@
    (binding '/ (primV '/))
    (binding '* (primV '*))
    (binding '<= (primV '<=))
-   (binding 'equal? (primV 'equal?))))
+   (binding 'equal? (primV 'equal?))
+   (binding 'println (primV 'println))
+   (binding 'read-num (primV 'read-num))
+   (binding 'read-str (primV 'read-str))
+   (binding 'seq (primV 'seq))
+   (binding '++ (primV '++))))
 
 ;; takes in a symbol to be looked up in an environment and returns its corresponding value
 (define (lookup [for : Symbol] [env : Environment]) : Value
@@ -116,7 +121,7 @@
         (if (and (numV? interp-l) (numV? interp-r))
             (if (not (= (numV-n interp-r) 0))
                 (numV (/ (numV-n interp-l) (numV-n interp-r)))
-                (error "AAQZ4 cant divide by zero :("))
+                (error "AAQZ4 cant divide by zero"))
             (error  "AAQZ4 need an integer with ~a operator" '/))]
        [(primV '<=)
         (if (and (numV? interp-l) (numV? interp-r))
@@ -129,6 +134,11 @@
            (boolV (string=? (stringV-str interp-l) (stringV-str interp-r)))]
           [(and (boolV? interp-l) (boolV? interp-r)) (boolV (eq? (boolV-bool interp-l) (boolV-bool interp-r)))]
           [else (boolV #f)])])]
+    [(list s)
+     (match op
+       [(primV 'println) (println s)]
+       [_ (error "AAQZ5 not supported")])
+     ]
     [other (error  "wrong number of variable for primV AAQZ4: ~a" other)]))
 
 ;; takes in a closure and a list of values and extends the closure's environment
